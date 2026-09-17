@@ -17,7 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ── Core settings ───────────────────────────────────────────────
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG')
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',
+                "perfume-store-87f2.onrender.com"]
 
 # ── Applications ────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -124,7 +125,8 @@ REST_FRAMEWORK = {
 }
 
 # ── CORS (allow the React dev server to call this API) ──────────
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:5173,http://127.0.0.1:5173',
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    "https://perfume-store-1-c3o9.onrender"
+]
