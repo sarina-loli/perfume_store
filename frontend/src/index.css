@@ -24,15 +24,25 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
 
 body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
 }
+
+#root { overflow-x: hidden; }
+
+/* Any element that ignores box-sizing shouldn't be able to push the page wide */
+img, svg, video, canvas { max-width: 100%; height: auto; }
 
 button { cursor: pointer; border: none; background: none; font-family: var(--font-body); }
 img { display: block; max-width: 100%; }
@@ -131,7 +141,15 @@ img { display: block; max-width: 100%; }
   transition: transform 0.3s;
 }
 
-@media (max-width: 768px) {
+/* Tighten spacing before the hamburger takes over, so the full link row
+   never outgrows the navbar on mid-size tablets/small laptops. */
+@media (max-width: 1024px) {
+  .nav-inner { padding: 0 1.25rem; }
+  .nav-links { gap: 1.25rem; }
+  .nav-links button { font-size: 0.72rem; }
+}
+
+@media (max-width: 900px) {
   .hamburger { display: flex; }
   .nav-links {
     position: fixed;
@@ -144,9 +162,17 @@ img { display: block; max-width: 100%; }
     transform: translateY(-110%);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-bottom: 1px solid var(--border);
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
   }
   .nav-links.open { transform: translateY(0); }
   .nav-links button { font-size: 0.9rem; }
+}
+
+@media (max-width: 420px) {
+  .nav-inner { padding: 0 1rem; }
+  .brand { font-size: 1.3rem; letter-spacing: 0.18em; }
+  .nav-links { padding: 1.5rem 1.25rem; }
 }
 
 /* ══════════════════════════════════════════
@@ -426,9 +452,18 @@ img { display: block; max-width: 100%; }
   /* scale mist text on mobile */
   .mist-word { font-size: 2.2rem; left: 60px; top: -36px; }
   .hero-content-col { padding: 2rem; text-align: center; }
-  .hero-sub { margin: 0 auto 2rem; }
+  .hero-sub { margin: 0 auto 2rem; max-width: 100%; }
   .hero-cta { margin: 0 auto; }
   .hero-down-arrow { bottom: 1rem; }
+}
+
+@media (max-width: 420px) {
+  .hero-image-col { padding: 4rem 1.25rem 2rem; min-height: 300px; }
+  .hero-bottle-wrap { max-width: 140px; }
+  .hero-content-col { padding: 1.5rem 1.25rem 2.5rem; }
+  .hero-cta { padding: 0.85rem 1.5rem; }
+  .mist-word { font-size: 1.6rem; left: 46px; top: -28px; }
+  .mist-quote { left: 52px; top: 44px; }
 }
 
 /* ══════════════════════════════════════════
@@ -550,6 +585,11 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 1100px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .products-grid { grid-template-columns: 1fr; } }
+@media (max-width: 420px) {
+  .products-section { padding: 4rem 1.25rem; }
+  .section-header { margin-bottom: 2.5rem; }
+  .product-info { padding: 1.25rem; }
+}
 
 /* ══════════════════════════════════════════
    PRODUCT DETAIL
@@ -729,10 +769,16 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 880px) {
-  .detail-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .detail-inner { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 2rem; }
   .detail-visual { order: 1; }
   .detail-content { order: 2; }
   .detail-bottle-img { width: 220px; height: 320px; }
+}
+
+@media (max-width: 420px) {
+  .detail-inner { padding: 3rem 1.25rem; gap: 2rem; }
+  .detail-bottle-img { width: 180px; height: 264px; }
+  .btn-primary { padding: 1rem 1.5rem; }
 }
 
 /* ══════════════════════════════════════════
@@ -931,9 +977,15 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 640px) {
-  .cart-item { grid-template-columns: 80px 1fr; }
+  .cart-item { grid-template-columns: 80px 1fr; gap: 1rem; }
+  .cart-item-img { width: 80px; height: 104px; }
   .cart-item-total { grid-column: 1 / -1; text-align: left; }
   .cart-actions { flex-direction: column; }
+}
+
+@media (max-width: 400px) {
+  .cart-inner { padding: 3rem 1.25rem; }
+  .cart-summary { padding: 1.5rem 1.25rem; }
 }
 
 /* ══════════════════════════════════════════
@@ -1044,6 +1096,11 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 640px) {
   .about-values { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+  .about-inner { padding: 4rem 1.25rem; }
+  .about-hero-overlay { padding: 1.5rem; }
 }
 
 /* ══════════════════════════════════════════
@@ -1204,6 +1261,12 @@ img { display: block; max-width: 100%; }
   .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
 }
 
+@media (max-width: 420px) {
+  .contact-inner { padding: 4rem 1.25rem; }
+  .contact-right { padding: 1.75rem; }
+  .contact-icon, .social-link { width: 36px; height: 36px; }
+}
+
 /* ══════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════ */
@@ -1246,6 +1309,10 @@ img { display: block; max-width: 100%; }
   background: var(--white);
   border: 1px solid var(--border);
   padding: 3rem;
+}
+
+@media (max-width: 420px) {
+  .auth-box { margin: 2.5rem 1rem; padding: 2rem 1.5rem; }
 }
 .auth-box h1 {
   font-family: var(--font-display);
@@ -1352,4 +1419,11 @@ img { display: block; max-width: 100%; }
   color: var(--text-light);
   margin-top: 1rem;
   text-align: center;
+}
+
+@media (max-width: 420px) {
+  .footer { padding: 2rem 1.25rem; }
+  .order-block-header { padding: 1rem; }
+  .order-block .cart-items { padding: 0 1rem; }
+  .order-block-total { padding: 1rem; }
 }
