@@ -850,6 +850,12 @@ export default function App() {
     return () => clearTimeout(t)
   }, [])
 
+  // Prevent background scroll while the mobile nav panel is open.
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   // Load the product catalog from the backend on first render.
   useEffect(() => {
     api.getProducts()
