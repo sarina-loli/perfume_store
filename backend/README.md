@@ -77,7 +77,7 @@ The API is now available at `http://localhost:8000/api/`.
 
 | Method | Endpoint                    | Auth required | Description |
 |--------|------------------------------|:---:|--------------|
-| GET    | `/api/products/`             |  | List all products |
+| GET    | `/api/products/`             |  | List all products (now includes `category`, `stock`, `in_stock`) |
 | GET    | `/api/products/<id>/`        |  | Product detail |
 | POST   | `/api/auth/register/`        |  | `{username, email, password}` → `{token, user}` |
 | POST   | `/api/auth/login/`           |  | `{username, password}` → `{token, user}` |
@@ -87,15 +87,63 @@ The API is now available at `http://localhost:8000/api/`.
 | POST   | `/api/cart/items/`           | ✅ | `{product_id, quantity}` — add or increment |
 | PATCH  | `/api/cart/items/<product_id>/` | ✅ | `{quantity}` — set an exact quantity (0 removes it) |
 | DELETE | `/api/cart/items/<product_id>/` | ✅ | Remove an item from the cart |
-| POST   | `/api/orders/`                | ✅ | Checks out the current cart into a new order |
-| GET    | `/api/orders/`                | ✅ | List the current user's past orders |
+| POST   | `/api/orders/`                | ✅ | Disabled — returns 400. Use `/api/payments/checkout/` |
+| GET    | `/api/orders/`                | ✅ | List the current user's past orders (pending/paid/failed/cancelled) |
 | GET    | `/api/orders/<id>/`           | ✅ | A single order's detail |
+| POST   | `/api/payments/checkout/`     | ✅ | Snapshots the cart into a pending order, returns `{checkout_url, order_id}` — redirect the browser to `checkout_url` |
+| GET    | `/api/payments/verify/?session_id=` | ✅ | Called by the success page; re-checks the session with Stripe and finalizes the order |
+| POST   | `/api/payments/cancel/`       | ✅ | `{order_id}` — marks a still-pending order as cancelled |
+| POST   | `/api/payments/webhook/`      |  | Stripe-only. Verified via the `Stripe-Signature` header, not a user token |
 
 For authenticated requests, send the header:
 
 ```
 Authorization: Token <token from login/register>
 ```
+
+## Payments (Stripe)
+
+Checkout uses **Stripe Checkout** (Stripe's own hosted payment page), so
+card data never touches this app and the frontend never needs any Stripe
+key — it just redirects to the URL `/api/payments/checkout/` returns.
+
+1. Create a free account at https://dashboard.stripe.com and grab your
+   **test mode** secret key from https://dashboard.stripe.com/test/apikeys.
+2. In `backend/.env`, set:
+   ```
+   STRIPE_SECRET_KEY=sk_test_...
+   FRONTEND_URL=http://localhost:5173
+   ```
+3. For webhooks in local dev, install the [Stripe CLI](https://stripe.com/docs/stripe-cli)
+   and run:
+   ```bash
+   stripe listen --forward-to localhost:8000/api/payments/webhook/
+   ```
+   It prints a `whsec_...` value — put that in `STRIPE_WEBHOOK_SECRET`.
+   (Webhooks aren't strictly required to test the flow locally — the
+   success page also calls `/api/payments/verify/`, which checks the
+   payment status with Stripe directly. The webhook is what makes it
+   reliable in production, where the customer's browser might not survive
+   long enough to hit the verify endpoint.)
+4. Test with [Stripe's test cards](https://stripe.com/docs/testing), e.g.
+   `4242 4242 4242 4242`, any future expiry, any CVC.
+
+What happens on a purchase:
+- `POST /api/payments/checkout/` snapshots the cart into a **pending**
+  `Order`, validates stock, and opens a Stripe Checkout session for the
+  total (subtotal + 8% tax).
+- The browser is redirected to Stripe's hosted page. Nothing in this app
+  ever sees card details.
+- On success, Stripe redirects to `/payment/success?session_id=...`. That
+  page calls `/api/payments/verify/`, which re-checks the session with
+  Stripe, and only then: decrements stock, marks the order `paid`, and
+  clears the cart. This is idempotent — calling it twice, or racing with
+  the webhook, never double-processes.
+- On cancel, Stripe redirects to `/payment/cancel?order_id=...`; the order
+  is marked `cancelled` and the cart is left untouched so the customer can
+  just try again.
+- A `Payment` row is kept per checkout attempt (`backend/payments/models.py`)
+  for audit/debugging — visible in `/admin/`.
 
 ## Notes on the design choices
 

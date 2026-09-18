@@ -17,6 +17,8 @@ PRODUCTS = [
             'heart that lingers like a morning embrace. Delicate, feminine, and utterly '
             'unforgettable.'
         ),
+        'category': 'floral',
+        'stock': 24,
     },
     {
         'name': 'Victoria Noir',
@@ -31,6 +33,8 @@ PRODUCTS = [
             'and precious amber, anchored by aged sandalwood and a whisper of vanilla. A '
             'fragrance of quiet power, undeniable allure, and timeless mystery.'
         ),
+        'category': 'oriental',
+        'stock': 15,
     },
     {
         'name': 'Victoria Royale',
@@ -45,6 +49,8 @@ PRODUCTS = [
             'of luxury worn only by those who define it. Iris and champagne notes shimmer '
             'with golden amber before settling into the softest cashmere finish.'
         ),
+        'category': 'oriental',
+        'stock': 8,
     },
     {
         'name': 'Victoria Mist',
@@ -59,6 +65,8 @@ PRODUCTS = [
             'sea salt and aquatic lily mingling with the warmth of sun-bleached driftwood and '
             'white musk. Effortlessly light, hauntingly evocative.'
         ),
+        'category': 'fresh',
+        'stock': 30,
     },
 ]
 

@@ -4,7 +4,37 @@ import Footer from '../components/Footer'
    PRODUCT DETAIL
 ════════════════════════════════════ */
 export default function DetailPage({ product, addToCart, navigate }) {
-  if (!product) return null
+  // A missing product (bad navigation state, stale link, etc.) used to
+  // render nothing at all — a blank page with just the navbar. Show a
+  // recoverable message instead.
+  if (!product) {
+    return (
+      <div className="detail-page">
+        <div className="detail-inner" style={{ gridTemplateColumns: '1fr', textAlign: 'center' }}>
+          <div className="detail-content">
+            <p className="detail-eyebrow">Not Found</p>
+            <h1 className="detail-name">We couldn't find that product</h1>
+            <p className="detail-desc">
+              It may have been removed, or the link is out of date.
+            </p>
+            <button className="btn-primary" onClick={() => navigate('home')}>
+              Back to Collection
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Defensive fallbacks: a product created/edited through the admin panel
+  // without every field set should degrade gracefully, not crash the page.
+  const name = product.name || 'Untitled'
+  const [firstWord, ...restWords] = name.split(' ')
+  const notes = Array.isArray(product.notes) ? product.notes : []
+  const stock = typeof product.stock === 'number' ? product.stock : null
+  const outOfStock = stock !== null && stock <= 0
+  const lowStock = stock !== null && stock > 0 && stock <= 5
 
   return (
     <div className="detail-page">
@@ -16,7 +46,7 @@ export default function DetailPage({ product, addToCart, navigate }) {
                 <img
                   className="detail-bottle-img"
                   src={product.img}
-                  alt={product.name}
+                  alt={name}
                 />
               </div>
             </div>
@@ -32,33 +62,51 @@ export default function DetailPage({ product, addToCart, navigate }) {
             Back to Collection
           </button>
 
-          <p className="detail-eyebrow">Eau de Parfum</p>
+          <p className="detail-eyebrow">
+            Eau de Parfum{product.category_display ? ` · ${product.category_display}` : ''}
+          </p>
           <h1 className="detail-name">
-            <em>{product.name.split(' ')[0]}</em>{' '}
-            {product.name.split(' ').slice(1).join(' ')}
+            <em>{firstWord}</em>{restWords.length ? ' ' + restWords.join(' ') : ''}
           </h1>
           <p className="detail-price">${product.price}</p>
 
           <div className="detail-divider" />
 
-          <p className="detail-desc">{product.description}</p>
+          {product.description && <p className="detail-desc">{product.description}</p>}
 
-          <p className="detail-notes-label">Fragrance Notes</p>
-          <div className="detail-notes">
-            {product.notes.map(note => (
-              <span key={note} className="note-pill">{note}</span>
-            ))}
+          {notes.length > 0 && (
+            <>
+              <p className="detail-notes-label">Fragrance Notes</p>
+              <div className="detail-notes">
+                {notes.map(note => (
+                  <span key={note} className="note-pill">{note}</span>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="detail-meta-row">
+            {product.size && <span className="detail-size">{product.size}</span>}
+            {stock !== null && (
+              <span className={`detail-stock${outOfStock ? ' out' : lowStock ? ' low' : ''}`}>
+                {outOfStock ? 'Out of Stock' : lowStock ? `Only ${stock} left` : `${stock} in stock`}
+              </span>
+            )}
           </div>
 
-          <p className="detail-size">{product.size}</p>
-
-          <button className="btn-primary" onClick={() => addToCart(product)}>
-            Add to Cart
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <circle cx="6" cy="13" r="1" fill="currentColor" />
-              <circle cx="12" cy="13" r="1" fill="currentColor" />
-              <path d="M1 1h2l2 8h7l1.5-5H4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <button
+            className="btn-primary"
+            onClick={() => addToCart(product)}
+            disabled={outOfStock}
+          >
+            {outOfStock ? 'Out of Stock' : 'Add to Cart'}
+            {!outOfStock && (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="6" cy="13" r="1" fill="currentColor" />
+                <circle cx="12" cy="13" r="1" fill="currentColor" />
+                <path d="M1 1h2l2 8h7l1.5-5H4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
           </button>
         </div>
       </div>

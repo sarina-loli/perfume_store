@@ -3,7 +3,7 @@ import Footer from '../components/Footer'
 /* ════════════════════════════════════
    CART
 ════════════════════════════════════ */
-export default function CartPage({ cart, updateQty, cartTotal, navigate, user, checkout, checkingOut }) {
+export default function CartPage({ cart, updateQty, cartTotal, navigate, user, checkout, checkingOut, checkoutError }) {
   const shipping = cartTotal > 0 ? 0 : 0
   const tax = +(cartTotal * 0.08).toFixed(2)
   const grand = +(cartTotal + tax).toFixed(2)
@@ -76,18 +76,28 @@ export default function CartPage({ cart, updateQty, cartTotal, navigate, user, c
                 <span>${grand.toFixed(2)}</span>
               </div>
 
+              {checkoutError && (
+                <p className="checkout-error" role="alert">{checkoutError}</p>
+              )}
+
               <div className="cart-actions">
                 <button className="btn-ghost" onClick={() => navigate('home')}>
                   Continue Shopping
                 </button>
                 <button className="btn-paypal" onClick={checkout} disabled={checkingOut}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.144 19.532l1.049-5.751c.11-.606.721-1.087 1.338-1.087h6.288c2.553 0 4.761-1.718 5.37-4.228C22.096 5.007 20.009 2 16.536 2H7.55a1.33 1.33 0 00-1.315 1.12L3.943 17.979c-.063.37.226.714.6.714H6.92c.3 0 .571-.214.634-.51l.59-2.65z"/>
-                    <path d="M20.189 8.466c-.577 2.926-2.814 4.784-5.741 4.784H9.536l-.814 4.468-.38 2.09a.51.51 0 00.504.592h3.325c.481 0 .898-.347.975-.822l.57-3.145a.99.99 0 01.975-.822h.617c3.128 0 5.58-1.87 6.145-4.974.253-1.384.082-2.58-.264-3.171z"/>
-                  </svg>
-                  {checkingOut ? 'Placing Order…' : 'Pay with PayPal'}
+                  {checkingOut ? (
+                    <span className="btn-spinner" aria-hidden="true" />
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M13.479 9.883c.129-.829-.008-1.393-.443-1.933-.478-.588-1.348-.84-2.462-.84H7.322a.6.6 0 00-.594.508l-1.42 9.013a.36.36 0 00.355.416h1.94l.487-3.086-.015.096a.6.6 0 01.594-.508h1.238c2.436 0 4.344-.99 4.902-3.856.017-.086.031-.17.043-.253M12.44 9.913c-.264 1.72-1.577 1.72-2.847 1.72h-.723l.507-3.215a.3.3 0 01.297-.254h.25c.865 0 1.682 0 2.103.494.25.294.327.732.213 1.255"/>
+                    </svg>
+                  )}
+                  {checkingOut ? 'Redirecting to payment…' : 'Proceed to Secure Payment'}
                 </button>
               </div>
+              <p className="checkout-secure-note">
+                🔒 Payments are processed securely by Stripe. We never see or store your card details.
+              </p>
             </div>
           </>
         )}

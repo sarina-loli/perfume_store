@@ -5,15 +5,22 @@ from products.models import Product
 
 
 class Order(models.Model):
+    # 'pending'   -> created at checkout, payment not yet confirmed
+    # 'paid'      -> payment confirmed by the payment provider
+    # 'failed'    -> payment attempt failed (declined, insufficient stock at confirmation, etc.)
+    # 'cancelled' -> the customer abandoned/cancelled checkout before paying
+    # 'completed' -> paid order that has since been fulfilled/shipped (set manually by staff)
     STATUS_CHOICES = [
+        ('pending', 'Pending'),
         ('paid', 'Paid'),
-        ('completed', 'Completed'),
+        ('failed', 'Failed'),
         ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='paid')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)

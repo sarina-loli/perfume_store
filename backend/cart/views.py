@@ -35,10 +35,20 @@ class CartItemAddView(APIView):
         product = get_object_or_404(Product, id=product_id)
 
         cart = _get_cart(request.user)
-        item, created = CartItem.objects.get_or_create(cart=cart, product=product, defaults={'quantity': quantity})
-        if not created:
-            item.quantity += quantity
-            item.save()
+        existing = CartItem.objects.filter(cart=cart, product=product).first()
+        new_quantity = quantity + (existing.quantity if existing else 0)
+
+        if new_quantity > product.stock:
+            return Response(
+                {'detail': f'Only {product.stock} of "{product.name}" left in stock.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if existing:
+            existing.quantity = new_quantity
+            existing.save()
+        else:
+            CartItem.objects.create(cart=cart, product=product, quantity=new_quantity)
 
         return Response(CartSerializer(cart).data, status=status.HTTP_201_CREATED)
 
@@ -58,6 +68,11 @@ class CartItemDetailView(APIView):
         if quantity <= 0:
             item.delete()
         else:
+            if quantity > item.product.stock:
+                return Response(
+                    {'detail': f'Only {item.product.stock} of "{item.product.name}" left in stock.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             item.quantity = quantity
             item.save()
 
