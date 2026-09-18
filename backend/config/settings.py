@@ -8,6 +8,8 @@ even if you're new to Django.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary_storage
 
 # Load variables from a .env file (if present) into the environment.
 load_dotenv()
@@ -33,6 +35,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    "cloudinary",
+    "cloudinary_storage",
 
     # Local apps
     'products',
@@ -102,11 +106,13 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",},
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",},}
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 
 
 
@@ -130,3 +136,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     "https://perfume-store-1-c3o9.onrender.com"
 ]
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+}
