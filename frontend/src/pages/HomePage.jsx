@@ -47,9 +47,7 @@ export default function HomePage({ products, viewDetail, sprayActive, loading, l
               </div>
 
               {/* Quote settles beneath VICTORIA in the same mist cloud */}
-              <p className={`mist-quote${sprayActive ? ' mist-active' : ''}`}>
-                Elegance that lingers, beauty that stays.
-              </p>
+             
             </div>
           </div>
         </div>
