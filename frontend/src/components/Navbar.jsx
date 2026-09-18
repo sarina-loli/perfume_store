@@ -6,9 +6,10 @@ export default function Navbar({ cartCount, navigate, menuOpen, setMenuOpen, use
     <nav className="navbar">
       <div className="nav-inner">
         <button className="brand" onClick={() => navigate('/')}>VICTORIA</button>
-        <button className="cart-link" onClick={() => navigate('/')}>Home</button>
+        
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          <button className="cart-link" onClick={() => navigate('/')}>Home</button>
           <button onClick={() => navigate('/products')}>Shop</button>
           <button className="cart-link" onClick={() => navigate('/cart')}>
             Cart
