@@ -1,5 +1,5 @@
 import PerfumeBottleSVG from '../components/PerfumeBottleSVG'
-import ProductCard from '../components/ProductCard'
+import ProductsSection from '../components/ProductsSection'
 import Footer from '../components/Footer'
 import { MIST_LETTERS, SPRAY_PARTICLES } from '../data/heroAnimation'
 
@@ -79,28 +79,12 @@ export default function HomePage({ products, viewDetail, sprayActive, loading, l
       </section>
 
       {/* PRODUCTS */}
-      <section id="products" className="products-section">
-        <div className="section-header">
-          <p className="section-eyebrow">Haute Parfumerie</p>
-          <h2 className="section-title">The Collection</h2>
-          <div className="section-rule" />
-        </div>
-
-        {loading && <p className="page-subtitle" style={{ textAlign: 'center' }}>Loading the collection…</p>}
-        {loadError && (
-          <p className="page-subtitle" style={{ textAlign: 'center' }}>
-            Couldn't reach the store server. Please make sure the backend is running, then refresh.
-          </p>
-        )}
-
-        {!loading && !loadError && (
-          <div className="products-grid">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} viewDetail={viewDetail} />
-            ))}
-          </div>
-        )}
-      </section>
+      <ProductsSection
+        products={products}
+        viewDetail={viewDetail}
+        loading={loading}
+        loadError={loadError}
+      />
 
       <Footer />
     </main>

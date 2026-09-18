@@ -1,5 +1,5 @@
 /* ════════════════════════════════════
-   ACCOUNT
+   PROFILE / ACCOUNT — /profile
 ════════════════════════════════════ */
 export default function AccountPage({ user, onLogout, navigate }) {
   return (
@@ -17,7 +17,7 @@ export default function AccountPage({ user, onLogout, navigate }) {
           <input type="text" value={user.email || '—'} disabled />
         </div>
 
-        <button className="btn-outline" onClick={() => navigate('orders')} style={{ marginBottom: '1rem' }}>
+        <button className="btn-outline" onClick={() => navigate('/orders')} style={{ marginBottom: '1rem' }}>
           View My Orders
         </button>
         <button className="btn-primary" onClick={onLogout}>

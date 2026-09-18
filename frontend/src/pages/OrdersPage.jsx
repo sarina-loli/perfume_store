@@ -17,7 +17,7 @@ export default function OrdersPage({ orders, loading, navigate }) {
             <div className="cart-empty-icon">✦</div>
             <h3>No orders yet</h3>
             <p>Once you check out, your orders will appear here.</p>
-            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('home')}>
+            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('/')}>
               Explore Collection
             </button>
           </div>

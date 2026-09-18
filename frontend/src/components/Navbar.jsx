@@ -5,25 +5,25 @@ export default function Navbar({ cartCount, navigate, menuOpen, setMenuOpen, use
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <button className="brand" onClick={() => navigate('home')}>VICTORIA</button>
+        <button className="brand" onClick={() => navigate('/')}>VICTORIA</button>
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
-          <button onClick={() => navigate('home')}>Shop</button>
-          <button className="cart-link" onClick={() => navigate('cart')}>
+          <button onClick={() => navigate('/products')}>Shop</button>
+          <button className="cart-link" onClick={() => navigate('/cart')}>
             Cart
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
-          <button onClick={() => navigate('about')}>About</button>
-          <button onClick={() => navigate('contact')}>Contact</button>
+          <button onClick={() => navigate('/about')}>About</button>
+          <button onClick={() => navigate('/contact')}>Contact</button>
           {user ? (
             <>
-              <button onClick={() => navigate('orders')}>Orders</button>
-              <button onClick={() => navigate('account')}>
+              <button onClick={() => navigate('/orders')}>Orders</button>
+              <button onClick={() => navigate('/profile')}>
                 <span className="nav-account-name">{user.username}</span>
               </button>
             </>
           ) : (
-            <button onClick={() => navigate('login')}>Login</button>
+            <button onClick={() => navigate('/login')}>Login</button>
           )}
         </div>
 

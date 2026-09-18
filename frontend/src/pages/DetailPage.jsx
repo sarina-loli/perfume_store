@@ -1,11 +1,59 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import Footer from '../components/Footer'
+import { api } from '../api'
 
 /* ════════════════════════════════════
-   PRODUCT DETAIL
+   PRODUCT DETAIL — /products/:id
+   The product id in the URL is the single source of truth, so this page
+   works on a hard refresh or a shared/bookmarked link, not just when
+   navigated to from a product card. It looks in the already-loaded
+   catalog first, and falls back to fetching that one product directly
+   (covers a refresh before the catalog has loaded, or a link to a
+   product that isn't in the currently-cached list).
 ════════════════════════════════════ */
-export default function DetailPage({ product, addToCart, navigate }) {
-  // A missing product (bad navigation state, stale link, etc.) used to
-  // render nothing at all — a blank page with just the navbar. Show a
+export default function DetailPage({ products, productsLoading, addToCart, navigate }) {
+  const { id } = useParams()
+  const [fetchedProduct, setFetchedProduct] = useState(null)
+  const [fetching, setFetching] = useState(false)
+  const [notFound, setNotFound] = useState(false)
+
+  const cachedProduct = products?.find(p => String(p.id) === String(id))
+  const product = cachedProduct || fetchedProduct
+
+  useEffect(() => {
+    setFetchedProduct(null)
+    setNotFound(false)
+
+    if (cachedProduct) return
+    if (productsLoading) return // catalog still loading — wait, it may contain this id
+
+    let cancelled = false
+    setFetching(true)
+    api.getProduct(id)
+      .then(data => { if (!cancelled) setFetchedProduct(data) })
+      .catch(() => { if (!cancelled) setNotFound(true) })
+      .finally(() => { if (!cancelled) setFetching(false) })
+
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, productsLoading, !!cachedProduct])
+
+  if (!product && (fetching || (productsLoading && !notFound))) {
+    return (
+      <div className="detail-page">
+        <div className="detail-inner" style={{ gridTemplateColumns: '1fr', textAlign: 'center' }}>
+          <div className="detail-content">
+            <p className="page-subtitle">Loading…</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  // A missing product (bad link, deleted product, mistyped id, etc.) used
+  // to render nothing at all — a blank page with just the navbar. Show a
   // recoverable message instead.
   if (!product) {
     return (
@@ -17,7 +65,7 @@ export default function DetailPage({ product, addToCart, navigate }) {
             <p className="detail-desc">
               It may have been removed, or the link is out of date.
             </p>
-            <button className="btn-primary" onClick={() => navigate('home')}>
+            <button className="btn-primary" onClick={() => navigate('/products')}>
               Back to Collection
             </button>
           </div>
@@ -55,7 +103,7 @@ export default function DetailPage({ product, addToCart, navigate }) {
         </div>
 
         <div className="detail-content">
-          <button className="detail-back-btn" onClick={() => navigate('home')}>
+          <button className="detail-back-btn" onClick={() => navigate('/products')}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M13 8H3M7 4L3 8l4 4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

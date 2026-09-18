@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { api, getToken, setToken } from './api'
 import { normalizeCart } from './utils/normalizeCart'
 
 import Navbar from './components/Navbar'
+import RequireAuth from './components/RequireAuth'
 import HomePage from './pages/HomePage'
+import ProductsPage from './pages/ProductsPage'
 import DetailPage from './pages/DetailPage'
 import CartPage from './pages/CartPage'
+import CheckoutPage from './pages/CheckoutPage'
 import LoginPage from './pages/LoginPage'
 import AccountPage from './pages/AccountPage'
 import OrdersPage from './pages/OrdersPage'
@@ -14,34 +18,17 @@ import ContactPage from './pages/ContactPage'
 import PaymentSuccessPage from './pages/PaymentSuccessPage'
 import PaymentCancelPage from './pages/PaymentCancelPage'
 
-// Stripe redirects the browser back to real URLs (/payment/success,
-// /payment/cancel) rather than going through the in-app `navigate()`
-// state — this app has no router, so we read that starting URL once,
-// on load, and clean it back up to "/" so normal in-app navigation
-// (which never touches the URL) isn't confused by it afterwards.
-function readInitialPaymentRoute() {
-  const { pathname, search } = window.location
-  const params = new URLSearchParams(search)
-
-  if (pathname === '/payment/success') {
-    return { page: 'payment-success', sessionId: params.get('session_id'), orderId: null }
-  }
-  if (pathname === '/payment/cancel') {
-    return { page: 'payment-cancel', sessionId: null, orderId: params.get('order_id') }
-  }
-  return null
-}
-
 /* ════════════════════════════════════
    APP ROOT
+   Every page now has its own real URL via React Router, so refreshing,
+   sharing a link, or using the browser back/forward buttons all work as
+   expected. This component just holds the shared app state (products,
+   cart, user, orders) and passes it down to whichever route is active.
 ════════════════════════════════════ */
 export default function App() {
-  const [initialPaymentRoute] = useState(readInitialPaymentRoute)
+  const routerNavigate = useNavigate()
+  const location = useLocation()
 
-  const [page, setPage] = useState(initialPaymentRoute ? initialPaymentRoute.page : 'home')
-  const [paymentSessionId] = useState(initialPaymentRoute?.sessionId || null)
-  const [paymentOrderId] = useState(initialPaymentRoute?.orderId || null)
-  const [selectedProduct, setSelectedProduct] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [sprayActive, setSprayActive] = useState(false)
 
@@ -50,22 +37,13 @@ export default function App() {
   const [productsError, setProductsError] = useState(false)
 
   const [user, setUser] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [cart, setCart] = useState([])
   const [checkingOut, setCheckingOut] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
 
   const [orders, setOrders] = useState([])
   const [ordersLoading, setOrdersLoading] = useState(false)
-
-  // Once we've read the payment route once on load, drop the special URL
-  // so a later refresh (or a share of the link) lands on the home page
-  // instead of re-triggering a stale verification.
-  useEffect(() => {
-    if (initialPaymentRoute) {
-      window.history.replaceState({}, '', '/')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setSprayActive(true), 3000)
@@ -95,29 +73,34 @@ export default function App() {
     }
   }, [])
 
-  // If a token is already saved (returning visitor, or just landed back
-  // from Stripe), log the user back in.
+  // If a token is already saved (returning visitor), log the user back in.
+  // `authLoading` tracks this so routes that require a login (Orders,
+  // Checkout, Profile) don't bounce a logged-in visitor to /login just
+  // because this check hasn't finished yet on a hard refresh.
   useEffect(() => {
     const token = getToken()
-    if (!token) return
+    if (!token) {
+      setAuthLoading(false)
+      return
+    }
     api.getCurrentUser()
       .then(u => {
         setUser(u)
         refreshCart()
       })
       .catch(() => setToken(null))
+      .finally(() => setAuthLoading(false))
   }, [refreshCart])
 
-  const navigate = (p) => {
-    setPage(p)
+  const navigate = (path) => {
+    routerNavigate(path)
     setMenuOpen(false)
     setCheckoutError('')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const viewDetail = (product) => {
-    setSelectedProduct(product)
-    navigate('detail')
+    navigate(`/products/${product.id}`)
   }
 
   const handleLoggedIn = async (token) => {
@@ -132,18 +115,18 @@ export default function App() {
     setToken(null)
     setUser(null)
     setCart([])
-    navigate('home')
+    navigate('/')
   }
 
   const addToCart = async (product) => {
     if (!user) {
-      navigate('login')
+      navigate('/login')
       return
     }
     if (product.stock <= 0) return
     await api.addCartItem(product.id, 1)
     await refreshCart()
-    navigate('cart')
+    navigate('/cart')
   }
 
   const updateQty = async (id, delta) => {
@@ -174,15 +157,15 @@ export default function App() {
     }
   }
 
-  // Load order history whenever the Orders page is opened.
+  // Load order history whenever the Orders page is open.
   useEffect(() => {
-    if (page !== 'orders' || !user) return
+    if (location.pathname !== '/orders' || !user) return
     setOrdersLoading(true)
     api.getOrders()
       .then(setOrders)
       .catch(() => setOrders([]))
       .finally(() => setOrdersLoading(false))
-  }, [page, user])
+  }, [location.pathname, user])
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0)
   const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0)
@@ -197,49 +180,95 @@ export default function App() {
         user={user}
       />
 
-      {page === 'home' && (
-        <HomePage
-          products={products}
-          viewDetail={viewDetail}
-          sprayActive={sprayActive}
-          loading={productsLoading}
-          loadError={productsError}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <HomePage
+              products={products}
+              viewDetail={viewDetail}
+              sprayActive={sprayActive}
+              loading={productsLoading}
+              loadError={productsError}
+            />
+          }
         />
-      )}
-      {page === 'detail' && (
-        <DetailPage
-          product={selectedProduct}
-          addToCart={addToCart}
-          navigate={navigate}
+        <Route
+          path="/products"
+          element={
+            <ProductsPage
+              products={products}
+              viewDetail={viewDetail}
+              loading={productsLoading}
+              loadError={productsError}
+            />
+          }
         />
-      )}
-      {page === 'cart' && (
-        <CartPage
-          cart={cart}
-          updateQty={updateQty}
-          cartTotal={cartTotal}
-          navigate={navigate}
-          user={user}
-          checkout={startCheckout}
-          checkingOut={checkingOut}
-          checkoutError={checkoutError}
+        <Route
+          path="/products/:id"
+          element={
+            <DetailPage
+              products={products}
+              productsLoading={productsLoading}
+              addToCart={addToCart}
+              navigate={navigate}
+            />
+          }
         />
-      )}
-      {page === 'payment-success' && (
-        <PaymentSuccessPage
-          sessionId={paymentSessionId}
-          navigate={navigate}
-          onConfirmed={refreshCart}
+        <Route
+          path="/cart"
+          element={
+            <CartPage
+              cart={cart}
+              updateQty={updateQty}
+              cartTotal={cartTotal}
+              navigate={navigate}
+              user={user}
+              checkout={startCheckout}
+              checkingOut={checkingOut}
+              checkoutError={checkoutError}
+            />
+          }
         />
-      )}
-      {page === 'payment-cancel' && (
-        <PaymentCancelPage orderId={paymentOrderId} navigate={navigate} />
-      )}
-      {page === 'login' && <LoginPage onLoggedIn={handleLoggedIn} navigate={navigate} />}
-      {page === 'account' && user && <AccountPage user={user} onLogout={handleLogout} navigate={navigate} />}
-      {page === 'orders' && <OrdersPage orders={orders} loading={ordersLoading} navigate={navigate} />}
-      {page === 'about' && <AboutPage />}
-      {page === 'contact' && <ContactPage />}
+        <Route
+          path="/checkout"
+          element={
+            <RequireAuth user={user} authLoading={authLoading}>
+              <CheckoutPage
+                cart={cart}
+                cartTotal={cartTotal}
+                navigate={navigate}
+                checkout={startCheckout}
+                checkingOut={checkingOut}
+                checkoutError={checkoutError}
+              />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <RequireAuth user={user} authLoading={authLoading}>
+              <OrdersPage orders={orders} loading={ordersLoading} navigate={navigate} />
+            </RequireAuth>
+          }
+        />
+        <Route path="/login" element={<LoginPage onLoggedIn={handleLoggedIn} navigate={navigate} mode="login" />} />
+        <Route path="/register" element={<LoginPage onLoggedIn={handleLoggedIn} navigate={navigate} mode="register" />} />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth user={user} authLoading={authLoading}>
+              <AccountPage user={user} onLogout={handleLogout} navigate={navigate} />
+            </RequireAuth>
+          }
+        />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage navigate={navigate} onConfirmed={refreshCart} />} />
+        <Route path="/payment/cancel" element={<PaymentCancelPage navigate={navigate} />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   )
 }

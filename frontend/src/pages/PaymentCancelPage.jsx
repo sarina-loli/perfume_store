@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { api } from '../api'
 
 /* ════════════════════════════════════
-   PAYMENT CANCELLED
-   Stripe sends the customer back here if they close or back out of
-   Checkout without paying. Nothing was charged; we just mark the
+   PAYMENT CANCELLED — /payment/cancel?order_id=...
+   Stripe sends the customer back to this real URL if they close or back
+   out of Checkout without paying. Nothing was charged; we just mark the
    pending order as cancelled and let them retry from the cart.
 ════════════════════════════════════ */
-export default function PaymentCancelPage({ orderId, navigate }) {
+export default function PaymentCancelPage({ navigate }) {
+  const [searchParams] = useSearchParams()
+  const orderId = searchParams.get('order_id')
+
   const [notified, setNotified] = useState(!orderId)
 
   useEffect(() => {
@@ -32,10 +36,10 @@ export default function PaymentCancelPage({ orderId, navigate }) {
               : 'Wrapping up…'}
           </p>
           <div className="cart-actions" style={{ marginTop: '1.5rem' }}>
-            <button className="btn-ghost" onClick={() => navigate('home')}>
+            <button className="btn-ghost" onClick={() => navigate('/')}>
               Continue Shopping
             </button>
-            <button className="btn-primary" style={{ flex: 2 }} onClick={() => navigate('cart')}>
+            <button className="btn-primary" style={{ flex: 2 }} onClick={() => navigate('/cart')}>
               Return to Cart
             </button>
           </div>

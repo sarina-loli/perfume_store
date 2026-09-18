@@ -2,10 +2,14 @@ import { useState } from 'react'
 import { api } from '../api'
 
 /* ════════════════════════════════════
-   LOGIN / REGISTER
+   LOGIN / REGISTER — /login and /register
+   Same form, two URLs. `mode` comes from which route rendered this page,
+   so the tabs below just navigate to the other URL rather than only
+   flipping local state — that keeps the address bar, a bookmark, and a
+   page refresh all agreeing on whether you're looking at Login or
+   Register.
 ════════════════════════════════════ */
-export default function LoginPage({ onLoggedIn, navigate }) {
-  const [mode, setMode] = useState('login') // 'login' | 'register'
+export default function LoginPage({ onLoggedIn, navigate, mode }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,7 +25,7 @@ export default function LoginPage({ onLoggedIn, navigate }) {
         ? await api.login(username, password)
         : await api.register(username, email, password)
       await onLoggedIn(data.token)
-      navigate('home')
+      navigate('/')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -38,10 +42,10 @@ export default function LoginPage({ onLoggedIn, navigate }) {
         </p>
 
         <div className="auth-tabs">
-          <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>
+          <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => navigate('/login')}>
             Login
           </button>
-          <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>
+          <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => navigate('/register')}>
             Register
           </button>
         </div>

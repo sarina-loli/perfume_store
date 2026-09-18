@@ -18,7 +18,7 @@ export default function CartPage({ cart, updateQty, cartTotal, navigate, user, c
 
         {!user && (
           <p className="page-subtitle" style={{ marginTop: '-2rem', marginBottom: '2rem' }}>
-            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.6rem 1.5rem' }} onClick={() => navigate('login')}>
+            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.6rem 1.5rem' }} onClick={() => navigate('/login')}>
               Log in to view your cart
             </button>
           </p>
@@ -29,7 +29,7 @@ export default function CartPage({ cart, updateQty, cartTotal, navigate, user, c
             <div className="cart-empty-icon">✦</div>
             <h3>Your cart is empty</h3>
             <p>Discover the Victoria Collection and find your signature scent.</p>
-            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('home')}>
+            <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('/')}>
               Explore Collection
             </button>
           </div>
@@ -81,10 +81,10 @@ export default function CartPage({ cart, updateQty, cartTotal, navigate, user, c
               )}
 
               <div className="cart-actions">
-                <button className="btn-ghost" onClick={() => navigate('home')}>
+                <button className="btn-ghost" onClick={() => navigate('/')}>
                   Continue Shopping
                 </button>
-                <button className="btn-paypal" onClick={checkout} disabled={checkingOut}>
+                <button className="btn-paypal" onClick={() => navigate('/checkout')} disabled={checkingOut}>
                   {checkingOut ? (
                     <span className="btn-spinner" aria-hidden="true" />
                   ) : (

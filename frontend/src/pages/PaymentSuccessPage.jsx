@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { api } from '../api'
 
 /* ════════════════════════════════════
-   PAYMENT SUCCESS
-   Stripe redirects here after a completed Checkout session. We don't
-   trust the redirect alone — the backend re-checks the payment status
-   with Stripe directly before we show anything as confirmed.
+   PAYMENT SUCCESS — /payment/success?session_id=...
+   Stripe redirects the browser to this real URL after a completed
+   Checkout session. We don't trust the redirect alone — the backend
+   re-checks the payment status with Stripe directly before we show
+   anything as confirmed.
 ════════════════════════════════════ */
-export default function PaymentSuccessPage({ sessionId, navigate, onConfirmed }) {
+export default function PaymentSuccessPage({ navigate, onConfirmed }) {
+  const [searchParams] = useSearchParams()
+  const sessionId = searchParams.get('session_id')
+
   const [state, setState] = useState('verifying') // 'verifying' | 'succeeded' | 'pending' | 'failed' | 'error'
   const [order, setOrder] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
@@ -88,10 +93,10 @@ export default function PaymentSuccessPage({ sessionId, navigate, onConfirmed })
             </div>
 
             <div className="cart-actions" style={{ marginTop: '2rem' }}>
-              <button className="btn-ghost" onClick={() => navigate('home')}>
+              <button className="btn-ghost" onClick={() => navigate('/')}>
                 Continue Shopping
               </button>
-              <button className="btn-primary" style={{ flex: 2 }} onClick={() => navigate('orders')}>
+              <button className="btn-primary" style={{ flex: 2 }} onClick={() => navigate('/orders')}>
                 View My Orders
               </button>
             </div>
@@ -107,7 +112,7 @@ export default function PaymentSuccessPage({ sessionId, navigate, onConfirmed })
               check your order history shortly.
             </p>
             <div className="cart-actions" style={{ marginTop: '1.5rem' }}>
-              <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('orders')}>
+              <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('/orders')}>
                 Check Order Status
               </button>
             </div>
@@ -122,7 +127,7 @@ export default function PaymentSuccessPage({ sessionId, navigate, onConfirmed })
               {errorMessage || "We couldn't confirm this payment. You haven't been charged for a failed attempt, and your cart has been kept as-is."}
             </p>
             <div className="cart-actions" style={{ marginTop: '1.5rem' }}>
-              <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('cart')}>
+              <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('/cart')}>
                 Back to Cart
               </button>
             </div>
