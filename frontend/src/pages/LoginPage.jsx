@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { api } from '../api'
+import { authApi } from '../api'
 
 /* ════════════════════════════════════
    LOGIN / REGISTER — /login and /register
@@ -22,8 +22,8 @@ export default function LoginPage({ onLoggedIn, navigate, mode }) {
     setBusy(true)
     try {
       const data = mode === 'login'
-        ? await api.login(username, password)
-        : await api.register(username, email, password)
+        ? await authApi.login(username, password)
+        : await authApi.register(username, email, password)
       await onLoggedIn(data.token)
       navigate('/')
     } catch (err) {

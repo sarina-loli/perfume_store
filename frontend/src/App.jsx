@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
-import { api, getToken, setToken } from './api'
+import { getToken, setToken, productsApi, authApi, cartApi, ordersApi, paymentsApi } from './api'
 import { normalizeCart } from './utils/normalizeCart'
 
 import Navbar from './components/Navbar'
@@ -58,7 +58,7 @@ export default function App() {
 
   // Load the product catalog from the backend on first render.
   useEffect(() => {
-    api.getProducts()
+    productsApi.getProducts()
       .then(data => setProducts(data))
       .catch(() => setProductsError(true))
       .finally(() => setProductsLoading(false))
@@ -66,7 +66,7 @@ export default function App() {
 
   const refreshCart = useCallback(async () => {
     try {
-      const data = await api.getCart()
+      const data = await cartApi.getCart()
       setCart(normalizeCart(data))
     } catch {
       setCart([])
@@ -83,7 +83,7 @@ export default function App() {
       setAuthLoading(false)
       return
     }
-    api.getCurrentUser()
+    authApi.getCurrentUser()
       .then(u => {
         setUser(u)
         refreshCart()
@@ -105,13 +105,13 @@ export default function App() {
 
   const handleLoggedIn = async (token) => {
     setToken(token)
-    const u = await api.getCurrentUser()
+    const u = await authApi.getCurrentUser()
     setUser(u)
     await refreshCart()
   }
 
   const handleLogout = async () => {
-    try { await api.logout() } catch { /* token may already be invalid */ }
+    try { await authApi.logout() } catch { /* token may already be invalid */ }
     setToken(null)
     setUser(null)
     setCart([])
@@ -124,7 +124,7 @@ export default function App() {
       return
     }
     if (product.stock <= 0) return
-    await api.addCartItem(product.id, 1)
+    await cartApi.addCartItem(product.id, 1)
     await refreshCart()
     navigate('/cart')
   }
@@ -134,9 +134,9 @@ export default function App() {
     if (!current) return
     const newQty = current.qty + delta
     if (newQty <= 0) {
-      await api.removeCartItem(id)
+      await cartApi.removeCartItem(id)
     } else {
-      await api.updateCartItem(id, newQty)
+      await cartApi.updateCartItem(id, newQty)
     }
     await refreshCart()
   }
@@ -149,7 +149,7 @@ export default function App() {
     setCheckingOut(true)
     setCheckoutError('')
     try {
-      const { checkout_url } = await api.createCheckoutSession()
+      const { checkout_url } = await paymentsApi.createCheckoutSession()
       window.location.href = checkout_url
     } catch (err) {
       setCheckoutError(err.message)
@@ -161,7 +161,7 @@ export default function App() {
   useEffect(() => {
     if (location.pathname !== '/orders' || !user) return
     setOrdersLoading(true)
-    api.getOrders()
+    ordersApi.getOrders()
       .then(setOrders)
       .catch(() => setOrders([]))
       .finally(() => setOrdersLoading(false))

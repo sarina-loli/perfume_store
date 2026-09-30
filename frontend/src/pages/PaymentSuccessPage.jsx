@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Footer from '../components/Footer'
-import { api } from '../api'
+import { paymentsApi } from '../api'
 
 /* ════════════════════════════════════
    PAYMENT SUCCESS — /payment/success?session_id=...
@@ -26,7 +26,7 @@ export default function PaymentSuccessPage({ navigate, onConfirmed }) {
     }
 
     let cancelled = false
-    api.verifyPayment(sessionId)
+    paymentsApi.verifyPayment(sessionId)
       .then(data => {
         if (cancelled) return
         setOrder(data.order)

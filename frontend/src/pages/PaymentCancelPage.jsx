@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Footer from '../components/Footer'
-import { api } from '../api'
+import { paymentsApi } from '../api'
 
 /* ════════════════════════════════════
    PAYMENT CANCELLED — /payment/cancel?order_id=...
@@ -18,7 +18,7 @@ export default function PaymentCancelPage({ navigate }) {
   useEffect(() => {
     if (!orderId) return
     let cancelled = false
-    api.cancelPayment(orderId)
+    paymentsApi.cancelPayment(orderId)
       .catch(() => { /* best-effort — the order stays pending and can still be verified/retried */ })
       .finally(() => { if (!cancelled) setNotified(true) })
     return () => { cancelled = true }
