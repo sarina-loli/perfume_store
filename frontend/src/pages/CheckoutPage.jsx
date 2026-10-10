@@ -7,7 +7,7 @@ import Footer from '../components/Footer'
    then redirect to Stripe Checkout) — nothing about how payment actually
    works has changed, this just gives it its own URL.
 ════════════════════════════════════ */
-export default function CheckoutPage({ cart, cartTotal, navigate, checkout, checkingOut, checkoutError }) {
+export default function CheckoutPage({ cart, cartTotal, navigate, startCheckout, checkingOut, checkoutError }) {
   const tax = +(cartTotal * 0.08).toFixed(2)
   const grand = +(cartTotal + tax).toFixed(2)
 
@@ -78,7 +78,7 @@ export default function CheckoutPage({ cart, cartTotal, navigate, checkout, chec
             <button className="btn-ghost" onClick={() => navigate('/cart')}>
               Back to Cart
             </button>
-            <button className="btn-paypal" onClick={checkout} disabled={checkingOut}>
+            <button className="btn-paypal" onClick={startCheckout} disabled={checkingOut}>
               {checkingOut ? (
                 <span className="btn-spinner" aria-hidden="true" />
               ) : (

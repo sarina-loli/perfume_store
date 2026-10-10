@@ -188,8 +188,8 @@ export default function App() {
               products={products}
               viewDetail={viewDetail}
               sprayActive={sprayActive}
-              loading={productsLoading}
-              loadError={productsError}
+              productsLoading={productsLoading}
+              productsError={productsError}
             />
           }
         />
@@ -199,8 +199,8 @@ export default function App() {
             <ProductsPage
               products={products}
               viewDetail={viewDetail}
-              loading={productsLoading}
-              loadError={productsError}
+              productsLoading={productsLoading}
+              productsError={productsError}
             />
           }
         />
@@ -210,6 +210,7 @@ export default function App() {
             <DetailPage
               products={products}
               productsLoading={productsLoading}
+              productsError={productsError}
               addToCart={addToCart}
               navigate={navigate}
             />
@@ -224,7 +225,7 @@ export default function App() {
               cartTotal={cartTotal}
               navigate={navigate}
               user={user}
-              checkout={startCheckout}
+              startCheckout={startCheckout}
               checkingOut={checkingOut}
               checkoutError={checkoutError}
             />
@@ -238,7 +239,7 @@ export default function App() {
                 cart={cart}
                 cartTotal={cartTotal}
                 navigate={navigate}
-                checkout={startCheckout}
+                startCheckout={startCheckout}
                 checkingOut={checkingOut}
                 checkoutError={checkoutError}
               />
@@ -249,23 +250,23 @@ export default function App() {
           path="/orders"
           element={
             <RequireAuth user={user} authLoading={authLoading}>
-              <OrdersPage orders={orders} loading={ordersLoading} navigate={navigate} />
+              <OrdersPage orders={orders} ordersLoading={ordersLoading} navigate={navigate} />
             </RequireAuth>
           }
         />
-        <Route path="/login" element={<LoginPage onLoggedIn={handleLoggedIn} navigate={navigate} mode="login" />} />
-        <Route path="/register" element={<LoginPage onLoggedIn={handleLoggedIn} navigate={navigate} mode="register" />} />
+        <Route path="/login" element={<LoginPage handleLoggedIn={handleLoggedIn} navigate={navigate} mode="login" />} />
+        <Route path="/register" element={<LoginPage handleLoggedIn={handleLoggedIn} navigate={navigate} mode="register" />} />
         <Route
           path="/profile"
           element={
             <RequireAuth user={user} authLoading={authLoading}>
-              <AccountPage user={user} onLogout={handleLogout} navigate={navigate} />
+              <AccountPage user={user} handleLogout={handleLogout} navigate={navigate} />
             </RequireAuth>
           }
         />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/payment/success" element={<PaymentSuccessPage navigate={navigate} onConfirmed={refreshCart} />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage navigate={navigate} refreshCart={refreshCart} />} />
         <Route path="/payment/cancel" element={<PaymentCancelPage navigate={navigate} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

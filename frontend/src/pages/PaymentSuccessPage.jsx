@@ -10,7 +10,7 @@ import { paymentsApi } from '../api'
    re-checks the payment status with Stripe directly before we show
    anything as confirmed.
 ════════════════════════════════════ */
-export default function PaymentSuccessPage({ navigate, onConfirmed }) {
+export default function PaymentSuccessPage({ navigate, refreshCart }) {
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session_id')
 
@@ -32,7 +32,7 @@ export default function PaymentSuccessPage({ navigate, onConfirmed }) {
         setOrder(data.order)
         if (data.status === 'succeeded') {
           setState('succeeded')
-          onConfirmed?.()
+          refreshCart?.()
         } else if (data.status === 'pending') {
           setState('pending')
         } else {
@@ -46,7 +46,7 @@ export default function PaymentSuccessPage({ navigate, onConfirmed }) {
       })
 
     return () => { cancelled = true }
-  }, [sessionId, onConfirmed])
+  }, [sessionId, refreshCart])
 
   return (
     <div className="cart-page payment-result-page">

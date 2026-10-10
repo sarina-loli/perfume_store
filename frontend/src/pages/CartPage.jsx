@@ -3,7 +3,7 @@ import Footer from '../components/Footer'
 /* ════════════════════════════════════
    CART
 ════════════════════════════════════ */
-export default function CartPage({ cart, updateQty, cartTotal, navigate, user, checkout, checkingOut, checkoutError }) {
+export default function CartPage({ cart, updateQty, cartTotal, navigate, user, startCheckout, checkingOut, checkoutError }) {
   const shipping = cartTotal > 0 ? 0 : 0
   const tax = +(cartTotal * 0.08).toFixed(2)
   const grand = +(cartTotal + tax).toFixed(2)

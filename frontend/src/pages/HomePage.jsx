@@ -6,7 +6,7 @@ import { MIST_LETTERS, SPRAY_PARTICLES } from '../data/heroAnimation'
 /* ════════════════════════════════════
    HOME PAGE
 ════════════════════════════════════ */
-export default function HomePage({ products, viewDetail, sprayActive, loading, loadError }) {
+export default function HomePage({ products, viewDetail, sprayActive, productsLoading, productsError }) {
   const scrollToProducts = () => {
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -80,8 +80,8 @@ export default function HomePage({ products, viewDetail, sprayActive, loading, l
       <ProductsSection
         products={products}
         viewDetail={viewDetail}
-        loading={loading}
-        loadError={loadError}
+        productsLoading={productsLoading}
+        productsError={productsError}
       />
 
       <Footer />

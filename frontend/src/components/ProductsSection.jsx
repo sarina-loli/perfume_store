@@ -5,7 +5,7 @@ import ProductCard from './ProductCard'
    The product grid, shared by the Home page (below the hero) and the
    standalone /products page.
 ════════════════════════════════════ */
-export default function ProductsSection({ products, viewDetail, loading, loadError, eyebrow = 'Haute Parfumerie', title = 'The Collection', hideHeader = false }) {
+export default function ProductsSection({ products, viewDetail, productsLoading, productsError, eyebrow = 'Haute Parfumerie', title = 'The Collection', hideHeader = false }) {
   return (
     <section id="products" className="products-section">
       {!hideHeader && (
@@ -16,14 +16,14 @@ export default function ProductsSection({ products, viewDetail, loading, loadErr
         </div>
       )}
 
-      {loading && <p className="page-subtitle" style={{ textAlign: 'center' }}>Loading the collection…</p>}
-      {loadError && (
+      {productsLoading && <p className="page-subtitle" style={{ textAlign: 'center' }}>Loading the collection…</p>}
+      {productsError && (
         <p className="page-subtitle" style={{ textAlign: 'center' }}>
           Couldn't reach the store server. Please make sure the backend is running, then refresh.
         </p>
       )}
 
-      {!loading && !loadError && (
+      {!productsLoading && !productsError && (
         <div className="products-grid">
           {products.map(product => (
             <ProductCard key={product.id} product={product} viewDetail={viewDetail} />

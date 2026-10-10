@@ -9,7 +9,7 @@ import { authApi } from '../api'
    page refresh all agreeing on whether you're looking at Login or
    Register.
 ════════════════════════════════════ */
-export default function LoginPage({ onLoggedIn, navigate, mode }) {
+export default function LoginPage({ handleLoggedIn, navigate, mode }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,7 +24,7 @@ export default function LoginPage({ onLoggedIn, navigate, mode }) {
       const data = mode === 'login'
         ? await authApi.login(username, password)
         : await authApi.register(username, email, password)
-      await onLoggedIn(data.token)
+      await handleLoggedIn(data.token)
       navigate('/')
     } catch (err) {
       setError(err.message)

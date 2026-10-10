@@ -3,16 +3,16 @@ import Footer from '../components/Footer'
 /* ════════════════════════════════════
    ORDERS
 ════════════════════════════════════ */
-export default function OrdersPage({ orders, loading, navigate }) {
+export default function OrdersPage({ orders, ordersLoading, navigate }) {
   return (
     <div className="cart-page">
       <div className="cart-inner">
         <h1 className="page-title">Your Orders</h1>
         <p className="page-subtitle">
-          {loading ? 'Loading…' : orders.length === 0 ? 'No orders yet' : `${orders.length} order${orders.length !== 1 ? 's' : ''}`}
+          {ordersLoading ? 'Loading…' : orders.length === 0 ? 'No orders yet' : `${orders.length} order${orders.length !== 1 ? 's' : ''}`}
         </p>
 
-        {!loading && orders.length === 0 && (
+        {!ordersLoading && orders.length === 0 && (
           <div className="cart-empty">
             <div className="cart-empty-icon">✦</div>
             <h3>No orders yet</h3>

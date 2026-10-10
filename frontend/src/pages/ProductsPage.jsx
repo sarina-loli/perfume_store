@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 /* ════════════════════════════════════
    PRODUCTS (shop the full collection — /products)
 ════════════════════════════════════ */
-export default function ProductsPage({ products, viewDetail, loading, loadError }) {
+export default function ProductsPage({ products, viewDetail, productsLoading, productsError }) {
   return (
     <main>
       <div className="section-header" style={{ marginTop: '3rem' }}>
@@ -16,8 +16,8 @@ export default function ProductsPage({ products, viewDetail, loading, loadError 
       <ProductsSection
         products={products}
         viewDetail={viewDetail}
-        loading={loading}
-        loadError={loadError}
+        productsLoading={productsLoading}
+        productsError={productsError}
         hideHeader
       />
 

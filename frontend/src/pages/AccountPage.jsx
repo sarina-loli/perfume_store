@@ -1,7 +1,7 @@
 /* ════════════════════════════════════
    PROFILE / ACCOUNT — /profile
 ════════════════════════════════════ */
-export default function AccountPage({ user, onLogout, navigate }) {
+export default function AccountPage({ user, handleLogout, navigate }) {
   return (
     <div className="auth-page">
       <div className="auth-box">
@@ -20,7 +20,7 @@ export default function AccountPage({ user, onLogout, navigate }) {
         <button className="btn-outline" onClick={() => navigate('/orders')} style={{ marginBottom: '1rem' }}>
           View My Orders
         </button>
-        <button className="btn-primary" onClick={onLogout}>
+        <button className="btn-primary" onClick={handleLogout}>
           Log Out
         </button>
       </div>
