@@ -2,33 +2,38 @@
 @import 'tailwindcss';
 
 :root {
-  --bg: #FAF8FF;
-  --bg-alt: #F3EFFF;
-  --lavender: #C4B0FF;
-  --lavender-soft: #DDD5FF;
-  --lavender-mid: #9B8ACB;
-  --lavender-dark: #6B5B9A;
-  --lavender-deep: #3D2B6A;
-  --gold: #C4973C;
+  /* Dark "Veloura" theme — sits on the blurred last-frame background */
+  --bg: transparent;
+  --bg-alt: rgba(255, 255, 255, 0.05);
+  --surface: rgba(16, 9, 30, 0.62);
+  --ink: #F6F0FF;                 /* headings / strong text */
+  --lavender: #8F78D6;
+  --lavender-soft: rgba(196, 176, 255, 0.22);
+  --lavender-mid: #B7A5E8;
+  --lavender-dark: #C9B8FF;       /* accent text */
+  --lavender-deep: #4B3590;       /* solid violet — button backgrounds */
+  --violet-hover: #6A4FC0;
+  --gold: #D8AE55;
   --gold-light: #E8D5A3;
-  --gold-dark: #8B6914;
+  --gold-dark: #E3BE6C;
   --white: #FFFFFF;
-  --text: #1A1325;
-  --text-mid: #5A4870;
-  --text-light: #9B8CB0;
-  --border: rgba(196, 176, 255, 0.3);
-  --shadow: rgba(107, 91, 154, 0.12);
+  --text: #F1EAFF;
+  --text-mid: #CFC1EA;
+  --text-light: #A596C4;
+  --border: rgba(196, 176, 255, 0.24);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --nav-h: 72px;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Raleway', -apple-system, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   font-family: var(--font-body);
-  background: var(--bg);
+  background: #07030f;
   color: var(--text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -49,7 +54,7 @@ img { display: block; max-width: 100%; }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(250, 248, 255, 0.88);
+  background: rgba(10, 5, 20, 0.62);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
@@ -70,7 +75,7 @@ img { display: block; max-width: 100%; }
   font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: 0.25em;
-  color: var(--lavender-deep);
+  color: var(--ink);
   transition: color 0.2s;
 }
 .brand:hover { color: var(--lavender-dark); }
@@ -141,7 +146,7 @@ img { display: block; max-width: 100%; }
     overflow-y: auto;
     flex-direction: column;
     align-items: flex-start;
-    background: rgba(250, 248, 255, 0.98);
+    background: rgba(10, 5, 20, 0.96);
     backdrop-filter: blur(20px);
     padding: 2rem;
     gap: 1.5rem;
@@ -180,321 +185,275 @@ img { display: block; max-width: 100%; }
 }
 
 /* ══════════════════════════════════════════
-   HERO
+   SITE BACKGROUND — last frame, blurred, fixed behind everything
 ══════════════════════════════════════════ */
-.hero {
-  min-height: 100vh;
-  padding-top: 72px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  position: relative;
-  overflow: visible; /* let mist bleed into right column */
-  background: #FDFCFF;
-}
-
-/* no ::before decoration — clean white canvas */
-
-.hero-image-col {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* comfortable gap from left edge, equal top/bottom breathing room */
-  padding: 6rem 2rem 6rem 6rem;
-  overflow: visible;
-}
-
-.hero-bottle-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 280px;
-  overflow: visible; /* critical: particles escape into right column */
-  z-index: 2;
-}
-
-.hero-bottle-svg {
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 32px 64px rgba(80, 50, 160, 0.28))
-          drop-shadow(0 8px 24px rgba(120, 80, 200, 0.18));
-}
-
-/* ── Spray mist ── */
-/* Origin point anchored to the nozzle tip in the SVG.
-   SVG viewBox 0 0 220 500; nozzle tip at x≈208, y≈37.
-   As % of rendered SVG: left = 208/220 = 94.5%, top = 37/500 = 7.4% */
-.mist-spray {
-  position: absolute;
-  left: 94.5%;
-  top: 7.4%;
-  width: 0;
-  height: 0;
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;   /* behind page content, inside .app's stacking context */
+  overflow: hidden;
   pointer-events: none;
-  z-index: 20;
+  background: #07030f;
 }
-
-/* Individual floating particles */
-.spray-particle {
+.site-bg::before {
+  content: '';
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 35%,
-    rgba(210, 190, 255, 0.85) 0%,
-    rgba(180, 150, 240, 0.55) 40%,
-    rgba(196, 176, 255, 0.15) 70%,
-    transparent 100%
-  );
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.08);
-  /* dimensions come from inline style */
+  inset: -14%;
+  background: url('/frames/bg-last.webp') center 58% / cover no-repeat;
+  filter: blur(90px) saturate(1.15) brightness(0.62);
+  transform: translateZ(0);
 }
-
-.mist-spray.active .spray-particle {
-  animation: sprayFly var(--dur) ease-out var(--del) infinite;
-}
-
-@keyframes sprayFly {
-  0% {
-    transform: translate(-50%, -50%) scale(0.08);
-    opacity: var(--op);
-    filter: blur(1px);
-  }
-  25% {
-    opacity: calc(var(--op) * 0.8);
-    filter: blur(3px);
-  }
-  65% {
-    opacity: calc(var(--op) * 0.35);
-    filter: blur(7px);
-  }
-  100% {
-    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1);
-    opacity: 0;
-    filter: blur(14px);
-  }
-}
-
-/* VICTORIA mist word — lives inside .mist-spray, floats right of nozzle */
-.mist-word {
+.site-bg::after {
+  content: '';
   position: absolute;
-  left: 80px;
-  top: -52px;
-  display: flex;
-  gap: 0.04em;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(4rem, 7.5vw, 7.5rem);
-  letter-spacing: 0.18em;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(7, 3, 15, 0) 0%, rgba(7, 3, 15, 0.6) 100%),
+    rgba(7, 3, 15, 0.38);
+}
+.site-bg--home::after {
+  /* home only: a soft dark column behind the 9:16 film frame so its black
+     edge melts into the glow instead of showing a seam */
+  background:
+    linear-gradient(90deg,
+      transparent calc(50% - 100svh * 0.56),
+      rgba(5, 2, 10, 0.92) calc(50% - 100svh * 0.3),
+      rgba(5, 2, 10, 0.92) calc(50% + 100svh * 0.3),
+      transparent calc(50% + 100svh * 0.56)),
+    radial-gradient(ellipse at 50% 45%, rgba(7, 3, 15, 0) 0%, rgba(7, 3, 15, 0.6) 100%),
+    rgba(7, 3, 15, 0.38);
+}
+.app { position: relative; z-index: 1; min-height: 100vh; }
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+  border: 0;
 }
 
-.mist-letter {
-  display: inline-block;
-  color: rgba(148, 110, 210, 0.75);
-  opacity: 0;
-  filter: blur(22px);
-  text-shadow:
-    0 0 24px rgba(196, 176, 255, 1),
-    0 0 50px rgba(180, 140, 250, 0.5);
+/* ══════════════════════════════════════════
+   HOME — SCROLL-DRIVEN FILM
+   .film is the scroll track; .film-stage is pinned to the screen while the
+   frames scrub. Frames are 9:16, drawn "contain" so they are never cropped
+   or stretched; the soft mask melts their black edge into the page background.
+══════════════════════════════════════════ */
+.film {
+  position: relative;
+  height: 650vh;
+  height: calc(100svh * 6.5);
 }
-
-.mist-active .mist-letter {
-  animation: mistForm 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes mistForm {
-  0%   { opacity: 0; filter: blur(26px); transform: translateX(-8px) scale(1.25); }
-  30%  { opacity: 0.55; filter: blur(14px); }
-  70%  { opacity: 0.85; filter: blur(3px); transform: translateX(2px) scale(1.01); }
-  100% { opacity: 1; filter: blur(0px); transform: translateX(0) scale(1); }
-}
-
-.mist-quote {
-  position: absolute;
-  left: 88px;
-  top: 62px; /* sits below the VICTORIA word (offset from nozzle origin) */
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(0.85rem, 1.4vw, 1.15rem);
-  font-weight: 400;
-  letter-spacing: 0.07em;
-  color: rgba(148, 110, 210, 0.0);
-  white-space: nowrap;
-  opacity: 0;
-  filter: blur(18px);
-  text-shadow:
-    0 0 20px rgba(196, 176, 255, 0.9),
-    0 0 40px rgba(180, 140, 250, 0.4);
-}
-
-.mist-quote.mist-active {
-  animation: mistQuote 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.9s forwards;
-}
-
-@keyframes mistQuote {
-  0%   { opacity: 0; filter: blur(20px); color: rgba(148, 110, 210, 0); transform: translateX(-6px); }
-  40%  { opacity: 0.6; filter: blur(8px);  color: rgba(148, 110, 210, 0.55); }
-  100% { opacity: 1;   filter: blur(0px);  color: rgba(148, 110, 210, 0.68); transform: translateX(0); }
-}
-
-/* staggered letter delays — particles settle 0.8s before letters form */
-.mist-active .mist-letter:nth-child(1) { animation-delay: 0.80s; }
-.mist-active .mist-letter:nth-child(2) { animation-delay: 0.92s; }
-.mist-active .mist-letter:nth-child(3) { animation-delay: 1.02s; }
-.mist-active .mist-letter:nth-child(4) { animation-delay: 1.11s; }
-.mist-active .mist-letter:nth-child(5) { animation-delay: 1.19s; }
-.mist-active .mist-letter:nth-child(6) { animation-delay: 1.26s; }
-.mist-active .mist-letter:nth-child(7) { animation-delay: 1.33s; }
-.mist-active .mist-letter:nth-child(8) { animation-delay: 1.39s; }
-
-.hero-content-col {
-  padding: 4rem 4rem 4rem 2rem;
+.film-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
-
-.hero-eyebrow {
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 1.5rem;
+.film-frame {
+  position: relative;
+  width: min(100vw, calc(100svh * 9 / 16));
+  aspect-ratio: 9 / 16;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-composite: intersect;
+}
+.film-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  transform: translateZ(0);
 }
 
-.hero-title {
+.film-loader {
+  position: absolute;
+  left: 50%; bottom: 2.2rem;
+  width: 120px; height: 2px;
+  margin-left: -60px;
+  background: rgba(196, 176, 255, 0.18);
+  overflow: hidden;
+}
+.film-loader span {
+  display: block;
+  width: 100%; height: 100%;
+  background: var(--lavender-dark);
+  transform-origin: left center;
+  transition: transform 0.25s ease;
+}
+
+/* all overlay elements start hidden; the scroll hook fades them in/out */
+.film-scrollcue,
+.film-caption,
+.film-finale { opacity: 0; visibility: hidden; will-change: opacity, transform; }
+
+.film-scrollcue {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: max(1.6rem, env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-mid);
+  pointer-events: none;
+}
+.arrow-chevron {
+  width: 10px; height: 10px;
+  border-right: 1.5px solid var(--lavender-dark);
+  border-bottom: 1.5px solid var(--lavender-dark);
+  transform: rotate(45deg);
+  animation: chevronBob 1.8s ease-in-out infinite;
+}
+@keyframes chevronBob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 6px; }
+}
+
+.film-caption {
+  position: absolute;
+  top: 50%;
+  margin-top: -2rem;
+  width: min(20vw, 300px);
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 5vw, 5rem);
+  font-size: clamp(1.1rem, 1.7vw, 1.7rem);
   font-weight: 400;
-  line-height: 1.12;
-  color: var(--lavender-deep);
-  margin-bottom: 1.5rem;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
 }
-.hero-title em {
+.film-caption em {
+  display: block;
   font-style: italic;
   color: var(--lavender-dark);
 }
+.film-caption--a { left: clamp(1.5rem, 6vw, 7rem); }
+.film-caption--b { right: clamp(1.5rem, 6vw, 7rem); text-align: right; }
+.film-caption--c { left: clamp(1.5rem, 6vw, 7rem); }
 
-.hero-sub {
-  font-size: 1rem;
-  font-weight: 300;
-  line-height: 1.8;
-  color: var(--text-mid);
-  max-width: 380px;
-  margin-bottom: 2.5rem;
+.film-finale {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: max(2rem, env(safe-area-inset-bottom));
+  margin: 0 auto;
+  width: min(92vw, 560px);
+  text-align: center;
 }
-
+.hero-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.9rem;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+.hero-title em { font-style: italic; color: var(--lavender-dark); }
+.hero-sub {
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-mid);
+  max-width: 460px;
+  margin: 0 auto 1.6rem;
+}
 .hero-cta {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 0.78rem;
+  min-height: 48px;
+  padding: 0.95rem 2.2rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--lavender-deep);
-  border: 1px solid var(--lavender-dark);
-  padding: 1rem 2rem;
-  width: fit-content;
-  transition: all 0.3s;
+  color: var(--ink);
+  border: 1px solid var(--lavender-mid);
+  background: rgba(20, 10, 40, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 .hero-cta:hover {
   background: var(--lavender-deep);
-  color: var(--white);
-  gap: 1rem;
+  border-color: var(--lavender-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(139, 105, 240, 0.35);
 }
 
-.hero-down-arrow {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  animation: arrowBounce 2s ease-in-out infinite;
-  z-index: 5;
-}
-.hero-down-arrow span {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-light);
-  font-weight: 500;
-}
-.arrow-chevron {
-  width: 20px; height: 20px;
-  border-right: 1.5px solid var(--lavender-mid);
-  border-bottom: 1.5px solid var(--lavender-mid);
-  transform: rotate(45deg);
-}
-@keyframes arrowBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(8px); }
-}
-
-@media (max-width: 960px) {
-  .hero {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    min-height: auto;
-    overflow: hidden; /* clip mist on mobile so it doesn't cause scroll */
+/* Narrow / portrait screens: the frame fills the width, so captions move
+   into the empty black band above the bottle instead of the side gutters. */
+@media (max-width: 1100px), (max-aspect-ratio: 1/1) {
+  .film-caption {
+    top: calc(var(--nav-h) + 1.25rem);
+    margin-top: 0;
+    left: 0; right: 0;
+    width: min(88vw, 420px);
+    margin-left: auto; margin-right: auto;
+    text-align: center !important;
+    font-size: clamp(1.15rem, 4.6vw, 1.6rem);
   }
-  .hero-image-col {
-    height: auto;
-    min-height: 360px;
-    padding: 6rem 1.5rem 2.5rem;
+}
+/* Wide landscape screens: the 9:16 frame leaves big side gutters, so the
+   closing copy sits in the left gutter (like the captions) instead of
+   covering the bottle. */
+@media (min-width: 1101px) and (min-aspect-ratio: 1/1) {
+  .film-finale {
+    left: clamp(1.5rem, 6vw, 7rem);
+    right: auto;
+    top: 0; bottom: 0;
+    margin: 0;
+    width: min(27vw, 440px);
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    overflow: hidden; /* keep the mist contained within this column, not overlapping the text below */
+    align-items: flex-start;
+    text-align: left;
   }
-  .hero-bottle-wrap { max-width: clamp(150px, 42vw, 220px); overflow: visible; }
-
-  /* Re-anchor the mist origin to the horizontal center of the bottle instead of the
-     nozzle tip — on narrow screens the nozzle sits too close to the right edge, which
-     pushed the VICTORIA word and quote off-screen and got them clipped. */
-  .mist-spray { left: 50%; top: 6%; }
-
-  .mist-word {
-    left: 0;
-    top: -3.2rem;
-    transform: translateX(-50%);
-    font-size: clamp(1.6rem, 8vw, 2.4rem);
-    letter-spacing: 0.12em;
-    justify-content: center;
-  }
-  .mist-quote {
-    left: 0;
-    top: 0.75rem;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 82vw;
-    white-space: normal;
-    text-align: center;
-    font-size: clamp(0.72rem, 3.2vw, 0.92rem);
-  }
-
-  .hero-content-col { padding: 1rem 1.75rem 2.5rem; text-align: center; }
-  .hero-title { font-size: clamp(2.1rem, 8vw, 3rem); }
-  .hero-sub { margin: 0 auto 2rem; max-width: 420px; }
-  .hero-cta { margin: 0 auto; }
-  .hero-down-arrow { bottom: 1rem; }
+  .hero-sub { margin-left: 0; }
 }
-
-@media (max-width: 420px) {
-  .hero-image-col { padding: 5.5rem 1rem 2rem; }
-  .hero-bottle-wrap { max-width: 44vw; }
-  .mist-word { top: -2.6rem; }
+@media (max-width: 900px) {
+  .film { height: calc(100svh * 5.2); }
+}
+@media (max-width: 560px) {
+  .hero-sub-more { display: none; }
+  .hero-sub { font-size: 0.82rem; line-height: 1.6; margin-bottom: 1.1rem; }
+  .hero-eyebrow { font-size: 0.62rem; letter-spacing: 0.26em; margin-bottom: 0.6rem; }
+  .hero-title { margin-bottom: 0.6rem; }
+  .hero-cta { padding: 0.85rem 1.7rem; }
+}
+@media (max-height: 640px) {
+  .hero-eyebrow, .hero-sub { display: none; }
+  .hero-title { margin-bottom: 0.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrow-chevron { animation: none; }
+  html { scroll-behavior: auto; }
 }
 
 /* ══════════════════════════════════════════
    PRODUCTS SECTION
 ══════════════════════════════════════════ */
 .products-section {
+  scroll-margin-top: var(--nav-h);
   padding: 7rem 2rem;
   max-width: 1280px;
   margin: 0 auto;
@@ -516,7 +475,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
 }
 .section-rule {
   width: 48px;
@@ -532,7 +491,9 @@ img { display: block; max-width: 100%; }
 }
 
 .product-card {
-  background: var(--white);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s;
   cursor: pointer;
@@ -585,7 +546,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 500;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 .product-tagline {
@@ -631,7 +592,7 @@ img { display: block; max-width: 100%; }
 .detail-page {
   min-height: 100vh;
   padding-top: 72px;
-  background: linear-gradient(160deg, #FAF8FF 0%, #EDE8FF 50%, #F5F1FF 100%);
+  background: transparent;
 }
 
 .detail-inner {
@@ -719,7 +680,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 3.5rem);
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   line-height: 1.15;
   margin-bottom: 0.5rem;
 }
@@ -793,7 +754,7 @@ img { display: block; max-width: 100%; }
   color: var(--lavender-dark);
 }
 .detail-stock.low { color: var(--gold-dark); }
-.detail-stock.out { color: #B3453D; }
+.detail-stock.out { color: #FF8F86; }
 
 .btn-primary {
   display: inline-flex;
@@ -813,7 +774,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-body);
 }
 .btn-primary:hover {
-  background: var(--lavender-dark);
+  background: var(--violet-hover);
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(107, 91, 154, 0.35);
 }
@@ -850,7 +811,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.5rem;
 }
 .page-subtitle {
@@ -873,7 +834,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.75rem;
 }
 .cart-empty p {
@@ -904,7 +865,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 500;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 .cart-item-details .tagline {
@@ -955,13 +916,15 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 500;
-  color: var(--lavender-deep);
+  color: var(--ink);
   text-align: right;
   white-space: nowrap;
 }
 
 .cart-summary {
-  background: var(--white);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   padding: 2rem;
 }
@@ -977,7 +940,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 500;
-  color: var(--lavender-deep);
+  color: var(--ink);
   border-top: 1px solid var(--border);
   padding-top: 1rem;
   margin-top: 0.5rem;
@@ -1037,7 +1000,7 @@ img { display: block; max-width: 100%; }
   padding: 0.85rem 1rem;
   background: rgba(179, 69, 61, 0.08);
   border: 1px solid rgba(179, 69, 61, 0.3);
-  color: #B3453D;
+  color: #FF8F86;
   font-size: 0.85rem;
   border-radius: 2px;
 }
@@ -1083,7 +1046,7 @@ img { display: block; max-width: 100%; }
 }
 .payment-result-icon.success {
   background: rgba(107, 91, 154, 0.12);
-  color: var(--lavender-deep);
+  color: var(--ink);
 }
 .payment-result-icon.pending {
   background: rgba(196, 151, 60, 0.12);
@@ -1091,7 +1054,7 @@ img { display: block; max-width: 100%; }
 }
 .payment-result-icon.failed {
   background: rgba(179, 69, 61, 0.1);
-  color: #B3453D;
+  color: #FF8F86;
 }
 
 .payment-spinner {
@@ -1116,7 +1079,7 @@ img { display: block; max-width: 100%; }
 .about-page {
   min-height: 100vh;
   padding-top: 72px;
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+  background: transparent;
 }
 
 .about-hero {
@@ -1180,7 +1143,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   line-height: 1.3;
   margin-bottom: 1.25rem;
 }
@@ -1206,7 +1169,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 500;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.5rem;
 }
 .about-value p {
@@ -1242,7 +1205,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   line-height: 1.2;
   margin-bottom: 1.25rem;
 }
@@ -1330,7 +1293,9 @@ img { display: block; max-width: 100%; }
 }
 
 .contact-right {
-  background: var(--white);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   padding: 3rem;
   align-self: start;
@@ -1339,7 +1304,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
 .form-field {
@@ -1360,7 +1325,7 @@ img { display: block; max-width: 100%; }
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.06);
   font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text);
@@ -1388,7 +1353,10 @@ img { display: block; max-width: 100%; }
    FOOTER
 ══════════════════════════════════════════ */
 .footer {
-  background: var(--lavender-deep);
+  background: rgba(10, 5, 20, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
   color: rgba(255,255,255,0.6);
   text-align: center;
   padding: 2.5rem 2rem;
@@ -1423,7 +1391,9 @@ img { display: block; max-width: 100%; }
   width: 100%;
   max-width: 420px;
   margin: 4rem 2rem;
-  background: var(--white);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   padding: 3rem;
 }
@@ -1431,7 +1401,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 400;
-  color: var(--lavender-deep);
+  color: var(--ink);
   margin-bottom: 0.5rem;
   text-align: center;
 }
@@ -1505,7 +1475,7 @@ img { display: block; max-width: 100%; }
 }
 .order-block-header .order-id {
   font-family: var(--font-display);
-  color: var(--lavender-deep);
+  color: var(--ink);
   font-size: 1rem;
 }
 .order-block-header .order-status {
@@ -1527,7 +1497,7 @@ img { display: block; max-width: 100%; }
   padding: 1rem 1.5rem;
   font-family: var(--font-display);
   font-size: 1.1rem;
-  color: var(--lavender-deep);
+  color: var(--ink);
   border-top: 1px solid var(--border);
 }
 

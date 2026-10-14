@@ -6,7 +6,7 @@ export default function PerfumeBottleSVG() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="hero-bottle-svg"
-      aria-label="Victoria violet perfume bottle"
+      aria-label="Veloura violet perfume bottle"
     >
       <defs>
         {/* Body glass gradient — violet */}
@@ -80,7 +80,7 @@ export default function PerfumeBottleSVG() {
         fontWeight="600"
         letterSpacing="4"
         fill="rgba(255,255,255,0.92)"
-      >VICTORIA</text>
+      >VELOURA</text>
       {/* Sub-text */}
       <text x="110" y="318"
         textAnchor="middle"

@@ -5,7 +5,7 @@ export default function Navbar({ cartCount, navigate, menuOpen, setMenuOpen, use
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <button className="brand" onClick={() => navigate('/')}>VICTORIA</button>
+        <button className="brand" onClick={() => navigate('/')}>VELOURA</button>
         
 
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>

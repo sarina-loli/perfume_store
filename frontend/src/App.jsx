@@ -30,7 +30,6 @@ export default function App() {
   const location = useLocation()
 
   const [menuOpen, setMenuOpen] = useState(false)
-  const [sprayActive, setSprayActive] = useState(false)
 
   const [products, setProducts] = useState([])
   const [productsLoading, setProductsLoading] = useState(true)
@@ -44,11 +43,6 @@ export default function App() {
 
   const [orders, setOrders] = useState([])
   const [ordersLoading, setOrdersLoading] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => setSprayActive(true), 3000)
-    return () => clearTimeout(t)
-  }, [])
 
   // Prevent background scroll while the mobile nav panel is open.
   useEffect(() => {
@@ -172,6 +166,8 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Last reference frame, blurred, fixed behind every page */}
+      <div className={`site-bg${location.pathname === '/' ? ' site-bg--home' : ''}`} aria-hidden="true" />
       <Navbar
         cartCount={cartCount}
         navigate={navigate}
@@ -187,7 +183,6 @@ export default function App() {
             <HomePage
               products={products}
               viewDetail={viewDetail}
-              sprayActive={sprayActive}
               productsLoading={productsLoading}
               productsError={productsError}
             />
