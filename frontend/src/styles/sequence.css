@@ -1,0 +1,325 @@
+/* ══════════════════════════════════════════
+   SCROLL SEQUENCE (home hero)
+   From the scroll-animation kit. The container is tall; the stage inside it is
+   pinned with position: sticky. Pinned scroll distance = container height -
+   stage height = --pin (set from SEQUENCE.pinVh in the component).
+
+   The kit's variables are scoped to .sequence on purpose: the kit's own
+   tokens.css would override --font-display / --font-body for the whole site.
+══════════════════════════════════════════ */
+.sequence {
+  --ink: #07040f;
+  --linen-dim: rgba(246, 242, 255, 0.8);
+  --linen-faint: rgba(246, 242, 255, 0.18);
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --nav-h: 72px; /* matches .nav-inner height */
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+
+  /* Desktop copy sits to the LEFT of the centered, contain-fitted frame.
+     Right padding = half the stage + half the frame width + a gap, where the
+     frame is 9:16 and as tall as the stage: 50% of 56.25svh = 28.125svh. */
+  --copy-pad-right: calc(50% + 28.125svh + 1.5rem);
+
+  position: relative;
+  height: calc(100vh + var(--pin));
+  height: calc(100svh + var(--pin));
+  color: var(--white);
+}
+
+.sequence__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+/* ---- Blurred background: the final frame, behind everything ---- */
+.sequence__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* .sequence__bg-image and the dark overlay share their rules with the site-wide
+   background: see styles/background.css. */
+
+/* The canvas fills the stage and contain-fits each frame inside it, so frames
+   are never cropped or stretched. It is transparent around the frame, which
+   lets the blurred background show through.
+
+   "screen" blending makes the frames' black studio backdrop transparent to the
+   blurred background (black adds nothing) while the bright artwork is drawn
+   unchanged. Without it the sharp frame reads as a hard-edged black box
+   against the purple glow of the blurred image. */
+.sequence__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+}
+
+/* ---- Loading progress ---- */
+.sequence__progress {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 0.9rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: min(14rem, 45vw);
+  color: var(--linen-dim);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.6s var(--ease), visibility 0s linear 0s;
+}
+
+.sequence__progress[data-state="ready"],
+.sequence__progress[data-state="error"] {
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0s, 0.6s;
+}
+
+.sequence__percent {
+  min-width: 2.6em;
+  text-align: right;
+}
+
+.sequence__track {
+  flex: 1;
+  height: 2px;
+  overflow: hidden;
+  background: var(--linen-faint);
+}
+
+.sequence__bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease);
+}
+
+.sequence__error {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  z-index: 3;
+  width: min(26rem, calc(100% - 2 * var(--gutter)));
+  transform: translateX(-50%);
+  color: var(--linen-dim);
+  text-align: center;
+}
+
+/* ---- Hero copy overlay ---- */
+.hero-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: var(--nav-h) var(--copy-pad-right) 3rem var(--gutter);
+  pointer-events: none;
+  text-shadow: 0 0 28px rgba(8, 4, 20, 0.85);
+}
+
+.hero-copy__part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), visibility 0s linear 0s;
+}
+
+.hero-copy__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.hero-copy__heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.hero-copy__heading em {
+  font-style: italic;
+  color: var(--lavender);
+}
+
+.hero-copy__description {
+  max-width: 24rem;
+  color: var(--linen-dim);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.hero-copy__hint {
+  color: var(--linen-dim);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* The copy layer ignores pointer events so it never blocks the page; the
+   buttons opt back in. */
+.hero-copy__cta {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: fit-content;
+  padding: 1rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(8, 4, 20, 0.25);
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-shadow: none;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 0.3s, color 0.3s, gap 0.3s;
+}
+
+.hero-copy__cta:hover,
+.hero-copy__cta:focus-visible {
+  gap: 1rem;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Once the user starts scrolling, the intro copy steps aside. */
+.sequence__stage:not([data-phase="intro"]) .hero-copy__part {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.75rem);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease), visibility 0s linear 0.45s;
+}
+
+.hero-copy__outro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: var(--nav-h) var(--copy-pad-right) 3rem var(--gutter);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.75rem);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease), visibility 0s linear 0.45s;
+}
+
+.sequence__stage[data-phase="outro"] .hero-copy__outro {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0.15s, 0.15s, 0s;
+}
+
+.hero-copy__closing {
+  max-width: 14em;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+/* Portrait phones, tablets and any window too narrow (aspect ratio under 1.3)
+   to leave room beside the frame: heading above the image, text and button
+   below it, over the frame's black margins, so the copy never sits on top of
+   the artwork. Landscape phones keep the side-column layout, which has room. */
+@media (max-aspect-ratio: 13/10) {
+  .sequence {
+    --copy-pad-right: var(--gutter);
+  }
+
+  .hero-copy {
+    justify-content: space-between;
+    gap: 1rem;
+    padding: calc(var(--nav-h) + 1.25rem) var(--gutter) calc(2.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-copy__heading {
+    max-width: 11em;
+    font-size: clamp(2rem, 8.5vw, 3.5rem);
+  }
+
+  .hero-copy__part {
+    gap: 1.1rem;
+  }
+
+  .hero-copy__description {
+    max-width: 30rem;
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  .hero-copy__hint {
+    display: none;
+  }
+
+  .hero-copy__outro {
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: calc(2.75rem + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+  }
+
+  .hero-copy__closing {
+    max-width: 16em;
+  }
+
+  .sequence__progress {
+    bottom: calc(0.9rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Very short windows (phones held sideways): keep only eyebrow, heading and
+   button, and size them to fit. */
+@media (max-height: 520px) {
+  .hero-copy {
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero-copy__part {
+    gap: 0.9rem;
+  }
+
+  .hero-copy__heading {
+    font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+  }
+
+  .hero-copy__cta {
+    padding: 0.8rem 1.4rem;
+  }
+
+  .hero-copy__description,
+  .hero-copy__hint {
+    display: none;
+  }
+}

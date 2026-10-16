@@ -1,0 +1,47 @@
+/* ══════════════════════════════════════════
+   SHARED BACKGROUND
+   One blurred copy of the animation's final frame, used by every page.
+
+   - <div class="site-bg"> is rendered once in App.jsx, fixed behind all
+     routes, so no page needs its own background rules.
+   - The home hero's pinned stage has to paint its own copy (the canvas uses
+     mix-blend-mode: screen against it), so it reuses these exact rules via
+     the shared selectors below instead of redefining them.
+   - The image URL comes from src/config/sequence.js and is exposed as
+     --site-bg-image on .app, so it is declared in one place only.
+══════════════════════════════════════════ */
+:root {
+  --bg-blur: clamp(40px, 6vw, 72px);
+  --bg-overlay: rgba(8, 4, 20, 0.5);   /* keeps text readable over the glow */
+}
+
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--ink);              /* shown until the image has loaded */
+}
+
+.site-bg__image,
+.sequence__bg-image {
+  position: absolute;
+  /* Bleed past the edges so the blur has no soft, see-through rim. */
+  inset: -12%;
+  background-image: var(--site-bg-image);
+  background-repeat: no-repeat;
+  background-size: cover;               /* fills any screen, any aspect ratio */
+  background-position: center;
+  filter: blur(var(--bg-blur));
+  transform: translateZ(0);             /* own layer: blurred once, only composited on scroll */
+}
+
+/* Dark violet veil, tuned to the frame's palette. */
+.site-bg::after,
+.sequence__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg-overlay);
+}

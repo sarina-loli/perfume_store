@@ -38,7 +38,7 @@ export default function LoginPage({ handleLoggedIn, navigate, mode }) {
       <div className="auth-box">
         <h1>{mode === 'login' ? 'Welcome Back' : 'Create Account'}</h1>
         <p className="page-subtitle">
-          {mode === 'login' ? 'Sign in to view your cart and orders' : 'Join Veloura to start shopping'}
+          {mode === 'login' ? 'Sign in to view your cart and orders' : 'Join Victoria to start shopping'}
         </p>
 
         <div className="auth-tabs">

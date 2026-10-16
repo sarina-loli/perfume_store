@@ -1,0 +1,19 @@
+:root {
+  /* Palette, sampled from the frames: the black studio background, the wine-dark
+     juice, and the orange segments. Mandarin is reserved for actions. */
+  --ink: #010101;
+  --wine: #6d1b38;
+  --berry: #b4365f;
+  --mandarin: #f5a247;
+  --mandarin-hover: #ffb866;
+  --linen: #f2eadf;
+  --linen-dim: rgba(242, 234, 223, 0.72);
+  --linen-faint: rgba(242, 234, 223, 0.16);
+
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --nav-h: 4.5rem;
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+}

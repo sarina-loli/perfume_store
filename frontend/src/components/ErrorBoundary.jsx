@@ -33,24 +33,24 @@ export default class ErrorBoundary extends Component {
           textAlign: 'center',
           padding: '2rem',
           fontFamily: "'Raleway', -apple-system, sans-serif",
-          background: '#FAF8FF',
-          color: '#1A1325',
+          background: '#07040f',
+          color: '#EDE7FA',
         }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: '#C4973C', marginBottom: '0.75rem' }}>
             Something Went Wrong
           </p>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2rem', color: '#3D2B6A', marginBottom: '1rem' }}>
+          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '2rem', color: '#F4EFFF', marginBottom: '1rem' }}>
             This page hit a snag
           </h1>
-          <p style={{ color: '#5A4870', marginBottom: '2rem', maxWidth: '420px' }}>
+          <p style={{ color: '#CFC6E6', marginBottom: '2rem', maxWidth: '420px' }}>
             Please try reloading the page. If the problem keeps happening, let us know.
           </p>
           <button
             onClick={() => window.location.assign('/')}
             style={{
               padding: '1rem 2.5rem',
-              background: '#3D2B6A',
-              color: '#FFFFFF',
+              background: '#C4B0FF',
+              color: '#1A0F33',
               fontSize: '0.8rem',
               fontWeight: 600,
               letterSpacing: '0.2em',

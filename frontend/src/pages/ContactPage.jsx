@@ -22,7 +22,7 @@ export default function ContactPage() {
               <div className="contact-icon">✉</div>
               <div>
                 <p className="label">Email</p>
-                <p className="value">hello@velouraperfume.com<br />press@velouraperfume.com</p>
+                <p className="value">hello@victoriaperfume.com<br />press@victoriaperfume.com</p>
               </div>
             </div>
 
@@ -44,7 +44,7 @@ export default function ContactPage() {
           </div>
 
           <div className="contact-social">
-            <p className="label">Follow Veloura</p>
+            <p className="label">Follow Victoria</p>
             <div className="social-links">
               <a href="#" className="social-link" aria-label="Instagram">IG</a>
               <a href="#" className="social-link" aria-label="Pinterest">PI</a>

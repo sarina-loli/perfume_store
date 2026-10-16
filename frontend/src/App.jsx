@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { getToken, setToken, productsApi, authApi, cartApi, ordersApi, paymentsApi } from './api'
 import { normalizeCart } from './utils/normalizeCart'
+import { backgroundUrl } from './config/sequence'
 
 import Navbar from './components/Navbar'
 import RequireAuth from './components/RequireAuth'
@@ -165,9 +166,12 @@ export default function App() {
   const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0)
 
   return (
-    <div className="app">
-      {/* Last reference frame, blurred, fixed behind every page */}
-      <div className={`site-bg${location.pathname === '/' ? ' site-bg--home' : ''}`} aria-hidden="true" />
+    <div className="app" style={{ '--site-bg-image': `url("${backgroundUrl}")` }}>
+      {/* Shared blurred background (last animation frame), behind every page */}
+      <div className="site-bg" aria-hidden="true">
+        <div className="site-bg__image" />
+      </div>
+
       <Navbar
         cartCount={cartCount}
         navigate={navigate}

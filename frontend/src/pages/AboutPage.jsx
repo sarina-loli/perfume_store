@@ -9,10 +9,10 @@ export default function AboutPage() {
       <div className="about-hero">
         <img
           src="https://images.unsplash.com/photo-1543422655-ac1c6ca993ed?w=1400&h=600&fit=crop&auto=format"
-          alt="Veloura atelier"
+          alt="Victoria atelier"
         />
         <div className="about-hero-overlay">
-          <h1>The Veloura Story</h1>
+          <h1>The Victoria Story</h1>
           <p>Perfumery as a Fine Art</p>
         </div>
       </div>
@@ -22,10 +22,10 @@ export default function AboutPage() {
           <p className="about-block-label">Our Origin</p>
           <h2>Born of a singular obsession with beauty</h2>
           <p>
-            VELOURA was founded in Paris in 2019 by master perfumer Élise Marchand, whose thirty years among the jasmine fields of Grasse gave her an intimate understanding of what makes a fragrance transcend — not just the notes, but the narrative they carry on the skin.
+            VICTORIA was founded in Paris in 2019 by master perfumer Élise Marchand, whose thirty years among the jasmine fields of Grasse gave her an intimate understanding of what makes a fragrance transcend — not just the notes, but the narrative they carry on the skin.
           </p>
           <p>
-            The house was built around a single conviction: that great perfume is inseparable from great storytelling. Each VELOURA fragrance is a chapter — composed with the precision of poetry and the patience of a craftsperson who refuses to rush something rare.
+            The house was built around a single conviction: that great perfume is inseparable from great storytelling. Each VICTORIA fragrance is a chapter — composed with the precision of poetry and the patience of a craftsperson who refuses to rush something rare.
           </p>
         </div>
 

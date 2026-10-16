@@ -28,7 +28,7 @@ export default function CartPage({ cart, updateQty, cartTotal, navigate, user, s
           <div className="cart-empty">
             <div className="cart-empty-icon">✦</div>
             <h3>Your cart is empty</h3>
-            <p>Discover the Veloura Collection and find your signature scent.</p>
+            <p>Discover the Victoria Collection and find your signature scent.</p>
             <button className="btn-outline" style={{ display: 'inline-block', width: 'auto', padding: '0.75rem 2rem' }} onClick={() => navigate('/')}>
               Explore Collection
             </button>
