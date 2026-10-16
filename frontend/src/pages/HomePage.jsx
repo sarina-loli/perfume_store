@@ -32,7 +32,7 @@ export default function HomePage({ products, viewDetail, productsLoading, produc
       >
         <div className="hero-copy">
           <div className="hero-copy__part hero-copy__top">
-            <p className="hero-copy__eyebrow">The Victoria Collection — 2026</p>
+            <p className="hero-copy__eyebrow">The Veloura Collection — 2026</p>
             <h1 className="hero-copy__heading">
               The Art of<br />
               <em>Rare Fragrance</em>
